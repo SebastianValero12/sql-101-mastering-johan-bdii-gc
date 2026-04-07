@@ -1,0 +1,105 @@
+---
+config:
+  theme: default
+---
+erDiagram
+  cs_customers {
+    serial id PK
+    varchar id_number UK
+    date birth_date
+    varchar phone_number
+    varchar name
+    varchar email UK
+    timestamp created_at
+  }
+
+  cs_addresses {
+    serial id PK
+    varchar customer_id_number FK
+    varchar municipality_code FK
+    varchar street
+    varchar detail
+    varchar postal_code
+    varchar additional_comments
+    timestamp created_at
+    timestamp updated_at
+  }
+
+  ctg_departments {
+    varchar code PK
+    varchar name
+  }
+
+  ctg_municipalities {
+    varchar code PK
+    varchar name
+    varchar department_code FK
+  }
+
+  ctg_categories {
+    serial id PK
+    varchar name UK
+    timestamp created_at
+  }
+
+  ctg_products {
+    serial id PK
+    varchar name
+    decimal usd_price
+    decimal cop_price
+    int category_id FK
+  }
+
+  ctg_payment_methods {
+    serial id PK
+    varchar name UK
+    timestamp create_at
+  }
+
+  pay_orders {
+    varchar id PK
+    varchar customer_id_number FK
+    timestamp order_date
+    decimal total
+    int payment_method_id FK
+  }
+
+  pay_order_items {
+    serial id PK
+    varchar order_id FK
+    int product_id FK
+    int quantity
+  }
+
+  ship_company {
+    serial id PK
+    varchar name UK
+    varchar nit UK
+    varchar address
+    varchar phone
+    varchar email
+    timestamp created_at
+  }
+
+  ship_shipment_orders {
+    varchar id PK
+    int ship_company_id FK
+    varchar order_id FK
+    varchar tracking_code UK
+    varchar status
+    timestamp shipped_at
+    timestamp delivered_at
+    timestamp created_at
+    timestamp updated_at
+  }
+
+  cs_customers ||--o{ cs_addresses : "has"
+  cs_customers ||--o{ pay_orders : "places"
+  ctg_departments ||--o{ ctg_municipalities : "contains"
+  ctg_municipalities ||--o{ cs_addresses : "located in"
+  ctg_categories ||--o{ ctg_products : "classifies"
+  ctg_payment_methods ||--o{ pay_orders : "used in"
+  pay_orders ||--o{ pay_order_items : "contains"
+  ctg_products ||--o{ pay_order_items : "included in"
+  pay_orders ||--o{ ship_shipment_orders : "shipped via"
+  ship_company ||--o{ ship_shipment_orders : "handles"
